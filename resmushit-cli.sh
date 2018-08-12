@@ -11,9 +11,7 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-
-PORT=80
-VERSION="1.0.0"
+VERSION="1.0.1"
 BUILD_DATE="20180812"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
@@ -26,12 +24,9 @@ TIME_LOG=true
 QUIET_MODE=false
 RED="\033[0;31m"
 GREEN="\033[0;32m"
-WHITEBG="\033[1;47;30m"
 LBLUE="\033[0;36m"
 NC="\033[0m" # No Color
 POSITIONAL=()
-
-
 
 # Display output and save it to log file.
 cli_output(){
