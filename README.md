@@ -35,18 +35,36 @@ If you're using a Linux system (Debian, CentOS...) you can install after cloning
 
 Your CLI optimizer will be available everywhere in your server/computer by typing `resmushit`
 
+### Usage example
+*Replace in the examples below `resmushit` by `./resmushit-cli.sh` if you haven't installed the optimizer globally on your machine.*
 
+**Optimize a picture and create a new optimized picture file**
+`resmushit mypicture.jpg`
+*The optimized file will be named `mypicture-optimized.jpg` 
+
+**Optimize a picture and replace the original file**
+`resmushit mypicture.jpg --preserve-filename`
+
+**Optimize a picture and set a optimization factor**
+`resmushit -q 92 mypicture.jpg`
+
+**Optimize multiple pictures and export them into a folder**
+`resmushit --output myexportdirectory/ *`
 
 
 ### Options
+
 - `-h` or `--help` : display the help menu
 - `-v` or `--version` : display the current version of reSmushit CLI client
 - `-q <quality>` or `--quality <quality>` : specify the quality factor between 0 and 100 (default is 92).
 - `-o <directory>` or `--output <directory>` : specify an output directory (will be created if not present) 
+- `--preserve-filename` : avoid to add `-optimized` in the filename when the image is optimized
 - `--notime` : avoid to display timer in output
 - `--quiet` : run in quiet mode
 
 ## Roadmap
+
+- [X] Add "preserve filename" option
 - [ ] Add EXIF preservation option
 - [ ] Add progress bar mode
 - [ ] Add support of recursive optimization
@@ -70,3 +88,24 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 Hey dude! Help me out for a couple of :beers:!
 
 [![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/badge.svg?style=beer-square)](https://beerpay.io/charlyie/resmushit-wordpress)  [![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/make-wish.svg?style=flat-square)](https://beerpay.io/charlyie/resmushit-wordpress?focus=wish)
+
+## Changelog
+
+### v.1.0.2 (build 20180813)
+
+- Add a "preserve-filename" option
+- Preserve original filename when exporting in another directory
+
+
+### v.1.0.1 (build 20180812)
+
+- Minor correction, unused variable, filename correction
+
+
+### v.1.0.0 (build 20180812)
+
+- Initial version of the tool
+- Support 1 or multiple file optimization. 
+- Avoid downloading picture if not optimized
+- No recursive mode implemented yet
+- Auto-exclude files which aren't supported

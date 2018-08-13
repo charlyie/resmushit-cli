@@ -11,14 +11,15 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.0.1"
-BUILD_DATE="20180812"
+VERSION="1.0.3"
+BUILD_DATE="20180813"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
 # System variables
 API_URL="http://api.resmush.it"
 QUALITY=92
 OUTPUT_DIR="."
+PRESERVE_FILENAME=false
 APP_DIR=$(dirname "$0")
 TIME_LOG=true
 QUIET_MODE=false
@@ -67,17 +68,21 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -o|--output)
-    OUTPUT_DIR="$2"
-    shift # past argument
-    shift # past value
-    ;;
     --notime)
     TIME_LOG=false
     shift # past argument
     ;;
     --quiet)
     QUIET_MODE=true
+    shift # past argument
+    ;;
+    -o|--output)
+    OUTPUT_DIR="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --preserve-filename)
+    PRESERVE_FILENAME=true
     shift # past argument
     ;;
     -h|--help)
@@ -91,6 +96,7 @@ case $key in
 	cli_output "  -v or --version \t\t\t\t display the version of reSmushit CLI client." standard notime
 	cli_output "  -q <quality> or --quality <quality> \t\t specify the quality factor between 0 and 100 (default is 92)." standard notime
 	cli_output "  -o <directory> or --output <directory> \t specify an output directory." standard notime
+	cli_output "  --preserve-filename \t\t\t avoid adding '-optimized' in the filename." standard notime
 	cli_output "  --notime \t\t\t\t\t avoid display timer in output." standard notime
 	cli_output "  --quiet \t\t\t\t\t avoid output display.\n" standard notime
 	exit 0
@@ -208,7 +214,11 @@ do
 	extension="${filename##*.}"
 	current_file_lower=$( echo $current_file | tr '[:upper:]' '[:lower:]')
 	filename="${filename%.*}"
-	output_filename="${filename}-optimized.${extension}"
+	if [[ PRESERVE_FILENAME == true ]] || [[ OUTPUT_DIR != "." ]]; then
+		output_filename="${filename}.${extension}"
+	else 
+ 		output_filename="${filename}-optimized.${extension}"
+ 	fi
 
 	# Optimize only authorized extensions
 	if [[ $current_file_lower =~ \.(png|jpg|jpeg|gif|bmp|tif|tiff) ]]; 
