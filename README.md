@@ -39,16 +39,21 @@ Your CLI optimizer will be available everywhere in your server/computer by typin
 *Replace in the examples below `resmushit` by `./resmushit-cli.sh` if you haven't installed the optimizer globally on your machine.*
 
 **Optimize a picture and create a new optimized picture file**
+
 `resmushit mypicture.jpg`
-*The optimized file will be named `mypicture-optimized.jpg` 
+
+*The optimized file will be named `mypicture-optimized.jpg`* 
 
 **Optimize a picture and replace the original file**
+
 `resmushit mypicture.jpg --preserve-filename`
 
 **Optimize a picture and set a optimization factor**
+
 `resmushit -q 92 mypicture.jpg`
 
 **Optimize multiple pictures and export them into a folder**
+
 `resmushit --output myexportdirectory/ *`
 
 
@@ -91,18 +96,18 @@ Hey dude! Help me out for a couple of :beers:!
 
 ## Changelog
 
-### v.1.0.2 (build 20180813)
+### v1.0.2 (build 20180813)
 
 - Add a "preserve-filename" option
 - Preserve original filename when exporting in another directory
 
 
-### v.1.0.1 (build 20180812)
+### v1.0.1 (build 20180812)
 
 - Minor correction, unused variable, filename correction
 
 
-### v.1.0.0 (build 20180812)
+### v1.0.0 (build 20180812)
 
 - Initial version of the tool
 - Support 1 or multiple file optimization. 
