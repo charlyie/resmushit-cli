@@ -12,13 +12,14 @@
 # as you leave these references intact in the header comments of your source files.
 
 VERSION="1.0.3"
-BUILD_DATE="20180813"
+BUILD_DATE="20180818"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
 # System variables
 API_URL="http://api.resmush.it"
 QUALITY=92
 OUTPUT_DIR="."
+PRESERVE_EXIF=false
 PRESERVE_FILENAME=false
 APP_DIR=$(dirname "$0")
 TIME_LOG=true
@@ -81,6 +82,10 @@ case $key in
     shift # past argument
     shift # past value
     ;;
+    --preserve-exif)
+    PRESERVE_EXIF=true
+    shift # past argument
+    ;;
     --preserve-filename)
     PRESERVE_FILENAME=true
     shift # past argument
@@ -89,14 +94,15 @@ case $key in
     shift # past argument
     cli_output "reSmush.it Image Optimizer CLI client v.${VERSION}, a Command Line Interface for reSmush.it, the Image Optimizer API" green notime
 	cli_output "(c) reSmush.it - Charles Bourgeaux <hello@resmush.it>\n" green notime
-	cli_output "Usage: ./resmushit-cli.sh <filename> [--quality <image quality>] [--output <directory] [--notime]"  blue notime
+	cli_output "Usage: ./resmushit-cli.sh <filename> [--quality <image quality>] [--output <directory] [--notime] [--preserve-filename] [--preserve-exif]"  blue notime
 	cli_output "Allowed file format : JPG, PNG, GIF, BMP, TIFF"  standard notime
 	cli_output "Startup:" standard notime
 	cli_output "  -h or --help \t\t\t\t\t print this help." standard notime
 	cli_output "  -v or --version \t\t\t\t display the version of reSmushit CLI client." standard notime
 	cli_output "  -q <quality> or --quality <quality> \t\t specify the quality factor between 0 and 100 (default is 92)." standard notime
 	cli_output "  -o <directory> or --output <directory> \t specify an output directory." standard notime
-	cli_output "  --preserve-filename \t\t\t avoid adding '-optimized' in the filename." standard notime
+	cli_output "  --preserve-exif \t\t\t\t will preserve EXIF data while optimizing." standard notime
+	cli_output "  --preserve-filename \t\t\t\t avoid appending '-optimized' in the filename." standard notime
 	cli_output "  --notime \t\t\t\t\t avoid display timer in output." standard notime
 	cli_output "  --quiet \t\t\t\t\t avoid output display.\n" standard notime
 	exit 0
@@ -214,7 +220,7 @@ do
 	extension="${filename##*.}"
 	current_file_lower=$( echo $current_file | tr '[:upper:]' '[:lower:]')
 	filename="${filename%.*}"
-	if [[ PRESERVE_FILENAME == true ]] || [[ OUTPUT_DIR != "." ]]; then
+	if [[ $PRESERVE_FILENAME == true ]] || [[ $OUTPUT_DIR != "." ]]; then
 		output_filename="${filename}.${extension}"
 	else 
  		output_filename="${filename}-optimized.${extension}"
@@ -223,29 +229,33 @@ do
 	# Optimize only authorized extensions
 	if [[ $current_file_lower =~ \.(png|jpg|jpeg|gif|bmp|tif|tiff) ]]; 
 	then
-		cli_output "Sending picture ${current_file} to api..."
-		api_output=$(curl -F "files=@${current_file}" --silent ${API_URL}"/?qlty=${QUALITY}")
-		api_error=$(echo ${api_output} | jq .error)
-
-		# Check if the API returned an error
-		if [[ "$api_error" != 'null' ]]; 
-		then
-			api_error_long=$(echo ${api_output} | jq -r .error_long)
-			cli_output "API responds Error #${api_error} : ${api_error_long}"
-			exit 0
+		if [ ! -f ${current_file} ]; then
+			cli_output "File ${current_file} not found" red
 		else
-			# Display result and download optimized file
-			api_percent=$(echo ${api_output} | jq .percent)
-			if [[ $api_percent == 0 ]]; 
+			cli_output "Sending picture ${current_file} to api..."
+			api_output=$(curl -F "files=@${current_file}" --silent ${API_URL}"/?qlty=${QUALITY}&exif=${PRESERVE_EXIF}")
+			api_error=$(echo ${api_output} | jq .error)
+
+			# Check if the API returned an error
+			if [[ "$api_error" != 'null' ]]; 
 			then
-				cli_output "File already optimized. No downloading necessary" green
+				api_error_long=$(echo ${api_output} | jq -r .error_long)
+				cli_output "API responds Error #${api_error} : ${api_error_long}"
+				exit 0
 			else
-				api_src_size=$(echo ${api_output} | jq .src_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
-				api_dest_size=$(echo ${api_output} | jq -r .dest_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
-				cli_output "File optimized by ${api_percent}%% (from ${api_src_size} to ${api_dest_size}). Retrieving..." green
-				api_file_output=$(echo ${api_output} | jq -r .dest)
-				curl ${api_file_output} --output ${OUTPUT_DIR}/${output_filename} --silent
-				cli_output "File saved as ${output_filename}" green
+				# Display result and download optimized file
+				api_percent=$(echo ${api_output} | jq .percent)
+				if [[ $api_percent == 0 ]]; 
+				then
+					cli_output "File already optimized. No downloading necessary" green
+				else
+					api_src_size=$(echo ${api_output} | jq .src_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
+					api_dest_size=$(echo ${api_output} | jq -r .dest_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
+					cli_output "File optimized by ${api_percent}%% (from ${api_src_size} to ${api_dest_size}). Retrieving..." green
+					api_file_output=$(echo ${api_output} | jq -r .dest)
+					curl ${api_file_output} --output ${OUTPUT_DIR}/${output_filename} --silent
+					cli_output "File saved as ${output_filename}" green
+				fi
 			fi
 		fi
 	else

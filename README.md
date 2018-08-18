@@ -27,7 +27,7 @@ This will require to be executed on a Linux based Operating System (Linux or Mac
 - `curl`
 - `jq` (*see [jq Homepage](https://stedolan.github.io/jq/ "jq is a lightweight and flexible command-line JSON processor.")*)
 
-### Install on my system
+### Install on your system
 
 If you're using a Linux system (Debian, CentOS...) you can install after cloning from the GIT repo by typing the following command as `root` user (or using `sudo`) :
 
@@ -56,6 +56,10 @@ Your CLI optimizer will be available everywhere in your server/computer by typin
 
 `resmushit --output myexportdirectory/ *`
 
+**Optimize a picture and preserve its EXIF data**
+
+`resmushit mypicture.jpg --preserve-exif`
+
 
 ### Options
 
@@ -64,13 +68,14 @@ Your CLI optimizer will be available everywhere in your server/computer by typin
 - `-q <quality>` or `--quality <quality>` : specify the quality factor between 0 and 100 (default is 92).
 - `-o <directory>` or `--output <directory>` : specify an output directory (will be created if not present) 
 - `--preserve-filename` : avoid to add `-optimized` in the filename when the image is optimized
+- `--preserve-exif` : will preserve EXIF data in the file after optimization
 - `--notime` : avoid to display timer in output
 - `--quiet` : run in quiet mode
 
 ## Roadmap
 
 - [X] Add "preserve filename" option
-- [ ] Add EXIF preservation option
+- [X] Add EXIF preservation option
 - [ ] Add progress bar mode
 - [ ] Add support of recursive optimization
 - [ ] Add an installer mode
@@ -90,11 +95,18 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Support on Beerpay
-Hey dude! Help me out for a couple of :beers:!
+Help us by paying us a couple of :beers:!
 
 [![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/badge.svg?style=beer-square)](https://beerpay.io/charlyie/resmushit-wordpress)  [![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/make-wish.svg?style=flat-square)](https://beerpay.io/charlyie/resmushit-wordpress?focus=wish)
 
 ## Changelog
+
+### v1.0.3 (build 20180818)
+
+- Adding EXIF preservation support
+- Add a verification is file specified exists
+- Correction for the filename non-preservation by default
+
 
 ### v1.0.2 (build 20180813)
 
