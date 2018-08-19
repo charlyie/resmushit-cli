@@ -11,8 +11,8 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.0.3"
-BUILD_DATE="20180818"
+VERSION="1.0.4"
+BUILD_DATE="20180819"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
 # System variables
@@ -29,6 +29,7 @@ GREEN="\033[0;32m"
 LBLUE="\033[0;36m"
 NC="\033[0m" # No Color
 POSITIONAL=()
+UPDATE_LOCKFILE="/tmp/.resmushit-cli.update"
 
 # Display output and save it to log file.
 cli_output(){
@@ -57,6 +58,77 @@ cli_output(){
 	fi
 	printf "${COLOR_OPEN_TAG}${TIME}$1 ${COLOR_CLOSE_TAG}\n"
 }
+
+check_update(){
+	_SCRIPT_NAME=`basename "$0"`
+
+	# Perform update verification once a day
+	if [ -f ${UPDATE_LOCKFILE} ]; then
+		_UPDATE_LOCKFILE_VALUE=`cat $UPDATE_LOCKFILE`
+
+		if [[ $_UPDATE_LOCKFILE_VALUE == "false" ]]; then
+			if [[ $(find "${UPDATE_LOCKFILE}" -mtime -1 -print) ]]; then
+				return
+			fi
+		else
+			cli_output "An update is available. Run \`${_SCRIPT_NAME} --update\` to perform an upgrade" blue notime
+			return
+		fi
+		
+	fi
+	cli_output "Checking for update..." standard notime
+	_REQUEST_OUTPUT=`curl --silent "https://api.github.com/repos/charlyie/resmushit-cli/tags"`
+	_REMOTE_VERSION=`echo ${_REQUEST_OUTPUT} | jq -r '.[0].name'`
+	_TARBALL=`echo ${_REQUEST_OUTPUT} | jq -r '.[0].tarball_url'`
+
+	if [[ $_REQUEST_OUTPUT == "v${VERSION}" ]]; then
+		cli_output "No update required (remote version is : ${_REMOTE_VERSION})" green
+		echo "false" > $UPDATE_LOCKFILE
+	else
+		_INSTALL_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+		_SCRIPT_PATH=`echo ${_INSTALL_DIR}/${_SCRIPT_NAME}`
+
+		cli_output "An update is available. Run \`${_SCRIPT_NAME} --update\` to perform an upgrade" blue notime
+		echo "true" > $UPDATE_LOCKFILE
+	fi
+}
+
+do_update(){
+	_REQUEST_OUTPUT=`curl --silent "https://api.github.com/repos/charlyie/resmushit-cli/tags"`
+	_REMOTE_VERSION=`echo ${_REQUEST_OUTPUT} | jq -r '.[0].name'`
+	_TARBALL=`echo ${_REQUEST_OUTPUT} | jq -r '.[0].tarball_url'`
+
+	if [[ $_REQUEST_OUTPUT == "v${VERSION}" ]]; then
+		cli_output "No update required (remote version is : ${_REMOTE_VERSION})" green
+	else
+		_INSTALL_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+		_SCRIPT_NAME=`basename "$0"`
+		_SCRIPT_PATH=`echo ${_INSTALL_DIR}/${_SCRIPT_NAME}`
+
+		cli_output "An update is available. Launching upgrade..." blue notime
+		cli_output "> Local version  : v${VERSION}" standard notime
+		cli_output "> Remote version : ${_REMOTE_VERSION}" standard notime
+
+		if [ ! -w "$_SCRIPT_PATH" ]; then
+			cli_output "Current executable not writable. Please run with sudo." red
+			exit 0
+		fi
+
+		cli_output "> Downloading from ${_TARBALL}..." standard notime
+ 		mkdir -p /tmp/resmushit-last-release
+		curl -L ${_TARBALL} --output /tmp/resmushit-cli-last-release.tar.gz --silent
+		cli_output "> Extracting tarball..." standard notime
+		tar xf /tmp/resmushit-cli-last-release.tar.gz -C /tmp/resmushit-last-release
+		cli_output "> Replacing executable..." standard notime
+		cp /tmp/resmushit-last-release/*/resmushit-cli.sh $_SCRIPT_PATH
+		rm -f $UPDATE_LOCKFILE
+		cli_output "> New installed version is :" green notime
+		$_SCRIPT_PATH --version
+		exit 0
+	fi
+}
+
+
 
 # Manage arguments
 while [[ $# -gt 0 ]]
@@ -90,21 +162,27 @@ case $key in
     PRESERVE_FILENAME=true
     shift # past argument
     ;;
+    --update)
+    shift # past argument
+    do_update
+    exit 0
+    ;;
     -h|--help)
     shift # past argument
     cli_output "reSmush.it Image Optimizer CLI client v.${VERSION}, a Command Line Interface for reSmush.it, the Image Optimizer API" green notime
 	cli_output "(c) reSmush.it - Charles Bourgeaux <hello@resmush.it>\n" green notime
-	cli_output "Usage: ./resmushit-cli.sh <filename> [--quality <image quality>] [--output <directory] [--notime] [--preserve-filename] [--preserve-exif]"  blue notime
+	cli_output "Usage: ./resmushit-cli.sh <filename> [--quality <image quality>] [--output <directory] [--notime] [--preserve-filename] [--preserve-exif] [--update]"  blue notime
 	cli_output "Allowed file format : JPG, PNG, GIF, BMP, TIFF"  standard notime
 	cli_output "Startup:" standard notime
+	cli_output "  -o <directory> or --output <directory> \t specify an output directory." standard notime
+	cli_output "  -q <quality> or --quality <quality> \t\t specify the quality factor between 0 and 100 (default is 92)." standard notime
 	cli_output "  -h or --help \t\t\t\t\t print this help." standard notime
 	cli_output "  -v or --version \t\t\t\t display the version of reSmushit CLI client." standard notime
-	cli_output "  -q <quality> or --quality <quality> \t\t specify the quality factor between 0 and 100 (default is 92)." standard notime
-	cli_output "  -o <directory> or --output <directory> \t specify an output directory." standard notime
+	cli_output "  --notime \t\t\t\t\t avoid display timer in output." standard notime
 	cli_output "  --preserve-exif \t\t\t\t will preserve EXIF data while optimizing." standard notime
 	cli_output "  --preserve-filename \t\t\t\t avoid appending '-optimized' in the filename." standard notime
-	cli_output "  --notime \t\t\t\t\t avoid display timer in output." standard notime
-	cli_output "  --quiet \t\t\t\t\t avoid output display.\n" standard notime
+	cli_output "  --quiet \t\t\t\t\t avoid output display." standard notime
+	cli_output "  --update \t\t\t\t\t perform an upgrade of this app.\n" standard notime
 	exit 0
     ;;
     -v|--version)
@@ -195,6 +273,8 @@ then
 	exit 0
 fi
 
+# Check if an update is available
+check_update
 
 # On first launch create a configuration, otherwise, read from it
 api_test=$(curl --write-out %{http_code} --silent --output /dev/null --connect-timeout 5 ${API_URL})
@@ -259,12 +339,7 @@ do
 			fi
 		fi
 	else
-		cli_output "File ${current_file} not an allowed picture format, skipping" blue
+		cli_output "File ${current_file} is not an allowed picture format, skipping" blue
 	fi
 done
 cli_output "Optimization completed" green
-
-
-
-
-

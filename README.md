@@ -2,15 +2,18 @@
 
 CLI client for the **reSmush.it Image Optimization API**
 
+
 ## What is reSmush.it ?
 
 Use reSmush.it Image Optimizer for **FREE** to **optimize your pictures file sizes**. Improve your performances by using reSmush.it, the 3 billion images API optimizer.
 
 reSmush.it Image Optimizer allow to use **free Image optimization** based on [reSmush.it API](https://resmush.it/ "Image Optimization API, developped by Charles Bourgeaux"). reSmush.it provides image size reduction based on several advanced algorithms. The API accept JPG, PNG and GIF files up to **5MB**.
 
+
 ## What is this tool ?
 
 This tool allow you to perform a powerful optimization of one or multiple pictures using a bash (command line) script based on the reSmush.it API.
+
 
 ## Getting Started
 
@@ -71,6 +74,13 @@ Your CLI optimizer will be available everywhere in your server/computer by typin
 - `--preserve-exif` : will preserve EXIF data in the file after optimization
 - `--notime` : avoid to display timer in output
 - `--quiet` : run in quiet mode
+- `--update` : perform an auto-upgrade process
+
+
+## Bugs
+
+All bugs should be reported to : [hello@resmush.it](mailto:hello@resmush.it) 
+
 
 ## Roadmap
 
@@ -79,11 +89,13 @@ Your CLI optimizer will be available everywhere in your server/computer by typin
 - [ ] Add progress bar mode
 - [ ] Add support of recursive optimization
 - [ ] Add an installer mode
-- [ ] Add an auto-update method based on Git repo
+- [X] Add an auto-update method based on Git repo
+
 
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/charlyie/resmushit-wordpress). 
+
 
 ## Authors
 
@@ -94,12 +106,19 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
+
 ## Support on Beerpay
 Help us by paying us a couple of :beers:!
 
 [![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/badge.svg?style=beer-square)](https://beerpay.io/charlyie/resmushit-wordpress)  [![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/make-wish.svg?style=flat-square)](https://beerpay.io/charlyie/resmushit-wordpress?focus=wish)
 
+
 ## Changelog
+
+### v1.0.4 (build 20180819)
+
+- Add an update verification
+- Add an auto-upgrade process
 
 ### v1.0.3 (build 20180818)
 
