@@ -115,6 +115,10 @@ Help us by paying us a couple of :beers:!
 
 ## Changelog
 
+### v1.0.5 (build 20180819)
+
+- Minor update bugfix
+
 ### v1.0.4 (build 20180819)
 
 - Add an update verification

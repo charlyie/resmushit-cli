@@ -11,7 +11,7 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.0.4"
+VERSION="1.0.5"
 BUILD_DATE="20180819"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
@@ -81,8 +81,8 @@ check_update(){
 	_REMOTE_VERSION=`echo ${_REQUEST_OUTPUT} | jq -r '.[0].name'`
 	_TARBALL=`echo ${_REQUEST_OUTPUT} | jq -r '.[0].tarball_url'`
 
-	if [[ $_REQUEST_OUTPUT == "v${VERSION}" ]]; then
-		cli_output "No update required (remote version is : ${_REMOTE_VERSION})" green
+	if [[ $_REMOTE_VERSION == "v${VERSION}" ]]; then
+		cli_output "No update required (remote version is : ${_REMOTE_VERSION})" green notime
 		echo "false" > $UPDATE_LOCKFILE
 	else
 		_INSTALL_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
