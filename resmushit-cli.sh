@@ -11,8 +11,8 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.0.5"
-BUILD_DATE="20180819"
+VERSION="1.0.6"
+BUILD_DATE="20181222"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
 # System variables
@@ -30,6 +30,7 @@ LBLUE="\033[0;36m"
 NC="\033[0m" # No Color
 POSITIONAL=()
 UPDATE_LOCKFILE="/tmp/.resmushit-cli.update"
+MAXFILESIZE=5242880 #5Mb
 
 # Display output and save it to log file.
 cli_output(){
@@ -312,30 +313,35 @@ do
 		if [ ! -f ${current_file} ]; then
 			cli_output "File ${current_file} not found" red
 		else
-			cli_output "Sending picture ${current_file} to api..."
-			api_output=$(curl -F "files=@${current_file}" --silent ${API_URL}"/?qlty=${QUALITY}&exif=${PRESERVE_EXIF}")
-			api_error=$(echo ${api_output} | jq .error)
+			filesize=`wc -c ${current_file} | awk '{print $1}'`
+			if [[ $filesize -lt $MAXFILESIZE ]]; then
+				cli_output "Sending picture ${current_file} to api..."
+				api_output=$(curl -F "files=@${current_file}" --silent ${API_URL}"/?qlty=${QUALITY}&exif=${PRESERVE_EXIF}")
+				api_error=$(echo ${api_output} | jq .error)
 
-			# Check if the API returned an error
-			if [[ "$api_error" != 'null' ]]; 
-			then
-				api_error_long=$(echo ${api_output} | jq -r .error_long)
-				cli_output "API responds Error #${api_error} : ${api_error_long}"
-				exit 0
-			else
-				# Display result and download optimized file
-				api_percent=$(echo ${api_output} | jq .percent)
-				if [[ $api_percent == 0 ]]; 
+				# Check if the API returned an error
+				if [[ "$api_error" != 'null' ]]; 
 				then
-					cli_output "File already optimized. No downloading necessary" green
+					api_error_long=$(echo ${api_output} | jq -r .error_long)
+					cli_output "API responds Error #${api_error} : ${api_error_long}"
+					exit 0
 				else
-					api_src_size=$(echo ${api_output} | jq .src_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
-					api_dest_size=$(echo ${api_output} | jq -r .dest_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
-					cli_output "File optimized by ${api_percent}%% (from ${api_src_size} to ${api_dest_size}). Retrieving..." green
-					api_file_output=$(echo ${api_output} | jq -r .dest)
-					curl ${api_file_output} --output ${OUTPUT_DIR}/${output_filename} --silent
-					cli_output "File saved as ${output_filename}" green
+					# Display result and download optimized file
+					api_percent=$(echo ${api_output} | jq .percent)
+					if [[ $api_percent == 0 ]]; 
+					then
+						cli_output "File already optimized. No downloading necessary" green
+					else
+						api_src_size=$(echo ${api_output} | jq .src_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
+						api_dest_size=$(echo ${api_output} | jq -r .dest_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
+						cli_output "File optimized by ${api_percent}%% (from ${api_src_size} to ${api_dest_size}). Retrieving..." green
+						api_file_output=$(echo ${api_output} | jq -r .dest)
+						curl ${api_file_output} --output ${OUTPUT_DIR}/${output_filename} --silent
+						cli_output "File saved as ${output_filename}" green
+					fi
 				fi
+			else
+				cli_output "File ${current_file} is beyond 5MB (${filesize} bytes), skipping" blue
 			fi
 		fi
 	else

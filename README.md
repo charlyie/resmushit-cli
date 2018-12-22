@@ -90,6 +90,7 @@ All bugs should be reported to : [hello@resmush.it](mailto:hello@resmush.it)
 - [ ] Add support of recursive optimization
 - [ ] Add an installer mode
 - [X] Add an auto-update method based on Git repo
+- [X] Avoid sending to API if file is > 5MB
 
 
 ## Versioning
@@ -114,6 +115,10 @@ Help us by paying us a couple of :beers:!
 
 
 ## Changelog
+
+### v1.0.6 (build 20181222)
+
+- Check if file is > 5MB before sending it to the API
 
 ### v1.0.5 (build 20180819)
 
