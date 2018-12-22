@@ -116,6 +116,10 @@ Help us by paying us a couple of :beers:!
 
 ## Changelog
 
+### v1.0.7 (build 20181222)
+
+- Better update check and upgrade minor fix
+
 ### v1.0.6 (build 20181222)
 
 - Check if file is > 5MB before sending it to the API

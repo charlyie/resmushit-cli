@@ -11,7 +11,7 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.0.6"
+VERSION="1.0.7"
 BUILD_DATE="20181222"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
@@ -106,26 +106,33 @@ do_update(){
 		_SCRIPT_NAME=`basename "$0"`
 		_SCRIPT_PATH=`echo ${_INSTALL_DIR}/${_SCRIPT_NAME}`
 
-		cli_output "An update is available. Launching upgrade..." blue notime
 		cli_output "> Local version  : v${VERSION}" standard notime
 		cli_output "> Remote version : ${_REMOTE_VERSION}" standard notime
 
-		if [ ! -w "$_SCRIPT_PATH" ]; then
-			cli_output "Current executable not writable. Please run with sudo." red
-			exit 0
-		fi
+		if [[ "v${VERSION}" !=  "${_REMOTE_VERSION}" ]]; then
+			cli_output "An update is available. Launching upgrade..." blue notime
+			if [ ! -w "$_SCRIPT_PATH" ]; then
+				cli_output "Current executable not writable. Please run with sudo." red
+				exit 0
+			fi
 
-		cli_output "> Downloading from ${_TARBALL}..." standard notime
- 		mkdir -p /tmp/resmushit-last-release
-		curl -L ${_TARBALL} --output /tmp/resmushit-cli-last-release.tar.gz --silent
-		cli_output "> Extracting tarball..." standard notime
-		tar xf /tmp/resmushit-cli-last-release.tar.gz -C /tmp/resmushit-last-release
-		cli_output "> Replacing executable..." standard notime
-		cp /tmp/resmushit-last-release/*/resmushit-cli.sh $_SCRIPT_PATH
-		rm -f $UPDATE_LOCKFILE
-		cli_output "> New installed version is :" green notime
-		$_SCRIPT_PATH --version
-		exit 0
+			cli_output "> Downloading from ${_TARBALL}..." standard notime
+			if [ -d "/tmp/resmushit-last-release" ]; then
+				rm -rf /tmp/resmushit-last-release
+			fi
+	 		mkdir -p /tmp/resmushit-last-release
+			curl -L ${_TARBALL} --output /tmp/resmushit-cli-last-release.tar.gz --silent
+			cli_output "> Extracting tarball..." standard notime
+			tar xf /tmp/resmushit-cli-last-release.tar.gz -C /tmp/resmushit-last-release
+			cli_output "> Replacing executable..." standard notime
+			cp /tmp/resmushit-last-release/*/resmushit-cli.sh $_SCRIPT_PATH
+			rm -f $UPDATE_LOCKFILE
+			cli_output "> New installed version is :" green notime
+			$_SCRIPT_PATH --version
+			exit 0
+		else
+			cli_output "No update available" blue notime
+		fi
 	fi
 }
 
