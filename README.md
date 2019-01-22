@@ -116,6 +116,11 @@ Help us by paying us a couple of :beers:!
 
 ## Changelog
 
+### v1.0.8 (build 20190122)
+
+- Fix an issue for filenames with spaces
+- Better check for the update temporary file writeability
+
 ### v1.0.7 (build 20181222)
 
 - Better update check and upgrade minor fix
