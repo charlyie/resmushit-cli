@@ -11,8 +11,8 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.0.7"
-BUILD_DATE="20181222"
+VERSION="1.0.8"
+BUILD_DATE="20190122"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
 # System variables
@@ -84,13 +84,29 @@ check_update(){
 
 	if [[ $_REMOTE_VERSION == "v${VERSION}" ]]; then
 		cli_output "No update required (remote version is : ${_REMOTE_VERSION})" green notime
-		echo "false" > $UPDATE_LOCKFILE
+		if [ -f "${UPDATE_LOCKFILE}" ]; then
+			if [ -w $UPDATE_LOCKFILE ]; then
+				echo "false" > $UPDATE_LOCKFILE
+			else
+				cli_output "Cannot write temporary file $UPDATE_LOCKFILE, please check if this file is writeable" red notime
+			fi
+		else
+			echo "false" > $UPDATE_LOCKFILE
+		fi
 	else
 		_INSTALL_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 		_SCRIPT_PATH=`echo ${_INSTALL_DIR}/${_SCRIPT_NAME}`
 
 		cli_output "An update is available. Run \`${_SCRIPT_NAME} --update\` to perform an upgrade" blue notime
-		echo "true" > $UPDATE_LOCKFILE
+		if [ -f "${UPDATE_LOCKFILE}" ]; then
+			if [ -w $UPDATE_LOCKFILE ]; then
+				echo "true" > $UPDATE_LOCKFILE
+			else
+				cli_output "Cannot write temporary file $UPDATE_LOCKFILE, please check if this file is writeable" red notime
+			fi
+		else
+			echo "true" > $UPDATE_LOCKFILE
+		fi
 	fi
 }
 
@@ -301,7 +317,7 @@ fi
 
 cli_output "Initializing images optimization with quality factor : ${QUALITY}%%" blue
 
-for current_file in ${FILES[@]}
+for current_file in "${FILES[@]}"
 do
 	# Extract file data
 	filename=$(basename -- "$current_file")
@@ -317,10 +333,10 @@ do
 	# Optimize only authorized extensions
 	if [[ $current_file_lower =~ \.(png|jpg|jpeg|gif|bmp|tif|tiff) ]]; 
 	then
-		if [ ! -f ${current_file} ]; then
+		if [ ! -f "${current_file}" ]; then
 			cli_output "File ${current_file} not found" red
 		else
-			filesize=`wc -c ${current_file} | awk '{print $1}'`
+			filesize=`wc -c "${current_file}" | awk '{print $1}'`
 			if [[ $filesize -lt $MAXFILESIZE ]]; then
 				cli_output "Sending picture ${current_file} to api..."
 				api_output=$(curl -F "files=@${current_file}" --silent ${API_URL}"/?qlty=${QUALITY}&exif=${PRESERVE_EXIF}")
@@ -343,7 +359,7 @@ do
 						api_dest_size=$(echo ${api_output} | jq -r .dest_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
 						cli_output "File optimized by ${api_percent}%% (from ${api_src_size} to ${api_dest_size}). Retrieving..." green
 						api_file_output=$(echo ${api_output} | jq -r .dest)
-						curl ${api_file_output} --output ${OUTPUT_DIR}/${output_filename} --silent
+						curl ${api_file_output} --output "${OUTPUT_DIR}/${output_filename}" --silent
 						cli_output "File saved as ${output_filename}" green
 					fi
 				fi
