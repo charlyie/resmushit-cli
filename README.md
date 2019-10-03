@@ -19,7 +19,7 @@ This tool allow you to perform a powerful optimization of one or multiple pictur
 
 This tool can optimize one or several pictures. The recursive option is not yet implemented.
 
-1. Download the tool using this command `wget https://raw.githubusercontent.com/reschandreas/resmushit-cli/master/install.sh | bash ./install.sh`
+1. Download the tool using this command `wget https://raw.githubusercontent.com/charlyie/resmushit-cli/master/install.sh | bash ./install.sh`
 2. Make the file `resmushit-cli.sh` executable using the following command : `chmod +x resmushit-cli.sh`
 3. Run the optimizer by typing command `./resmushit-cli.sh myfile.jpg`
 
