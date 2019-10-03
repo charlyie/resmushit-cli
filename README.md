@@ -7,7 +7,7 @@ CLI client for the **reSmush.it Image Optimization API**
 
 Use reSmush.it Image Optimizer for **FREE** to **optimize your pictures file sizes**. Improve your performances by using reSmush.it, the 3 billion images API optimizer.
 
-reSmush.it Image Optimizer allow to use **free Image optimization** based on [reSmush.it API](https://resmush.it/ "Image Optimization API, developped by Charles Bourgeaux"). reSmush.it provides image size reduction based on several advanced algorithms. The API accept JPG, PNG and GIF files up to **5MB**.
+reSmush.it Image Optimizer allows you to use **free Image optimization** based on [reSmush.it API](https://resmush.it/ "Image Optimization API, developped by Charles Bourgeaux"). reSmush.it provides image size reduction based on several advanced algorithms. The API accept JPG, PNG and GIF files up to **5MB**.
 
 
 ## What is this tool ?
@@ -17,9 +17,9 @@ This tool allow you to perform a powerful optimization of one or multiple pictur
 
 ## Getting Started
 
-This tool can optimize on or several pictures. The recursive option is not yet implemented
+This tool can optimize one or several pictures. The recursive option is not yet implemented.
 
-1. Download the tool using a git clone command on your computer/server
+1. Download the tool using this command `wget https://raw.githubusercontent.com/reschandreas/resmushit-cli/master/install.sh | bash ./install.sh`
 2. Make the file `resmushit-cli.sh` executable using the following command : `chmod +x resmushit-cli.sh`
 3. Run the optimizer by typing command `./resmushit-cli.sh myfile.jpg`
 
@@ -36,7 +36,7 @@ If you're using a Linux system (Debian, CentOS...) you can install after cloning
 
 - `mv resmushit-cli.sh /usr/bin/resmushit;chmod +x /usr/bin/resmushit`
 
-Your CLI optimizer will be available everywhere in your server/computer by typing `resmushit`
+Your CLI optimizer will be available everywhere on your server/computer by typing `resmushit`
 
 ### Usage example
 *Replace in the examples below `resmushit` by `./resmushit-cli.sh` if you haven't installed the optimizer globally on your machine.*
