@@ -11,8 +11,8 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.0.8"
-BUILD_DATE="20190122"
+VERSION="1.0.9"
+BUILD_DATE="20200216"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
 # System variables
