@@ -108,10 +108,10 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 
-## Support on Beerpay
-Help us by paying us a couple of :beers:!
+## Support us on our new platform
+Support us through Ko-Fi !
 
-[![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/badge.svg?style=beer-square)](https://beerpay.io/charlyie/resmushit-wordpress)  [![Beerpay](https://beerpay.io/charlyie/resmushit-wordpress/make-wish.svg?style=flat-square)](https://beerpay.io/charlyie/resmushit-wordpress?focus=wish)
+[![Kofi](https://feed.resmush.it/images/kofi-button.png)](https://ko-fi.com/resmushit)
 
 
 ## Changelog
