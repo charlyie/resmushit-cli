@@ -59,6 +59,12 @@ Your CLI optimizer will be available everywhere on your server/computer by typin
 
 `resmushit --output myexportdirectory/ *`
 
+**Optimize a folder recursively **
+
+`resmushit myfolder -r`
+`resmushit /path/to/folder -r`
+`resmushit * -r`
+
 **Optimize a picture and preserve its EXIF data**
 
 `resmushit mypicture.jpg --preserve-exif`
@@ -70,6 +76,7 @@ Your CLI optimizer will be available everywhere on your server/computer by typin
 - `-v` or `--version` : display the current version of reSmushit CLI client
 - `-q <quality>` or `--quality <quality>` : specify the quality factor between 0 and 100 (default is 92).
 - `-o <directory>` or `--output <directory>` : specify an output directory (will be created if not present) 
+- `-r` or `--recursive` : execute the optimization to the folder specified recusively
 - `--preserve-filename` : avoid to add `-optimized` in the filename when the image is optimized
 - `--preserve-exif` : will preserve EXIF data in the file after optimization
 - `--notime` : avoid to display timer in output
@@ -87,7 +94,7 @@ All bugs should be reported to : [hello@resmush.it](mailto:hello@resmush.it)
 - [X] Add "preserve filename" option
 - [X] Add EXIF preservation option
 - [ ] Add progress bar mode
-- [ ] Add support of recursive optimization
+- [X] Add support of recursive optimization
 - [X] Add an installer mode
 - [X] Add an auto-update method based on Git repo
 - [X] Avoid sending to API if file is > 5MB
@@ -115,6 +122,10 @@ Support us through Ko-Fi !
 
 
 ## Changelog
+
+### v1.1.0 (build 20201115)
+
+- Add recursive mode for complete folder optimization
 
 ### v1.0.9 (build 20200216)
 
