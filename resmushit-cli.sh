@@ -11,8 +11,8 @@
 # You are not obligated to bundle the LICENSE file with your projects as long
 # as you leave these references intact in the header comments of your source files.
 
-VERSION="1.1.0"
-BUILD_DATE="20200216"
+VERSION="1.1.1"
+BUILD_DATE="20210501"
 REQUIRED_PACKAGES=( "curl" "jq" )
 
 # System variables
@@ -178,7 +178,7 @@ optimize_file(){
 			filesize=`wc -c "${current_file}" | awk '{print $1}'`
 			if [[ $filesize -lt $MAXFILESIZE ]]; then
 				cli_output "Sending picture ${current_file} to api..."
-				api_output=$(curl -F "files=@${current_file}" --silent ${API_URL}"/?qlty=${QUALITY}&exif=${PRESERVE_EXIF}")
+				api_output=$(curl -k -F "files=@${current_file}" --silent ${API_URL}"/?qlty=${QUALITY}&exif=${PRESERVE_EXIF}" -A "resmushit-cli/$VERSION") 
 				api_error=$(echo ${api_output} | jq .error)
 
 				# Check if the API returned an error
@@ -198,7 +198,7 @@ optimize_file(){
 						api_dest_size=$(echo ${api_output} | jq -r .dest_size | awk '{ split( "B KB MB GB" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } printf "%.2f%s", $1, v[s] }')
 						cli_output "File optimized by ${api_percent}%% (from ${api_src_size} to ${api_dest_size}). Retrieving..." green
 						api_file_output=$(echo ${api_output} | jq -r .dest)
-						curl ${api_file_output} --output "${filefolder}/${output_filename}" --silent
+						curl -k ${api_file_output} --output "${filefolder}/${output_filename}" --silent -A "resmushit-cli/$VERSION"
 						cli_output "File saved as ${filefolder}/${output_filename}" green
 					fi
 				fi
@@ -366,7 +366,7 @@ fi
 check_update
 
 # On first launch create a configuration, otherwise, read from it
-api_test=$(curl --write-out %{http_code} --silent --output /dev/null --connect-timeout 5 ${API_URL})
+api_test=$(curl -k --write-out %{http_code} --silent --output /dev/null --connect-timeout 5 ${API_URL})
 if [[ "$api_test" == "000" ]]; 
 then
 	cli_output "reSmush.it API is unreachable"

@@ -5,7 +5,7 @@ CLI client for the **reSmush.it Image Optimization API**
 
 ## What is reSmush.it ?
 
-Use reSmush.it Image Optimizer for **FREE** to **optimize your pictures file sizes**. Improve your performances by using reSmush.it, the 7 billion images API optimizer.
+Use reSmush.it Image Optimizer for **FREE** to **optimize your pictures file sizes**. Improve your performances by using reSmush.it, the 10+ billion images API optimizer.
 
 reSmush.it Image Optimizer allows you to use **free Image optimization** based on [reSmush.it API](https://resmush.it/ "Image Optimization API, developped by Charles Bourgeaux"). reSmush.it provides image size reduction based on several advanced algorithms. The API accept JPG, PNG and GIF files up to **5MB**.
 
@@ -122,6 +122,11 @@ Support us through Ko-Fi !
 
 
 ## Changelog
+
+### v1.1.1 (build 20210501)
+
+- Avoid errors if SSL certificate is down
+- Add user agent in requests
 
 ### v1.1.0 (build 20201115)
 
